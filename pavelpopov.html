@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Black & White · инверсия</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0b0b0b;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1.5rem;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-image: 
+                radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.10) 0%, transparent 65%),
+                radial-gradient(ellipse at 50% 100%, rgba(255, 255, 255, 0.10) 0%, transparent 65%),
+                radial-gradient(ellipse at 30% 50%, rgba(255, 255, 255, 0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 50%, rgba(255, 255, 255, 0.04) 0%, transparent 50%);
+            background-blend-mode: normal;
+        }
+
+        .container {
+            max-width: 1100px;
+            width: 100%;
+            background: rgba(20, 20, 20, 0.7);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            padding: 2.5rem 2rem;
+            border-radius: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 60px -20px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.02);
+            color: #ffffff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.02) 0%, transparent 60%),
+                        radial-gradient(circle at 80% 70%, rgba(255,255,255,0.02) 0%, transparent 60%);
+            pointer-events: none;
+            border-radius: 3rem;
+        }
+
+        .services-grid, .price-section, .footer {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* шапка — звезда и текст в одной строке, выравнены по центру */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            padding-bottom: 0.8rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            flex-wrap: wrap;
+        }
+
+        .header .name {
+            font-size: 1.2rem;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 0.5px;
+        }
+
+        .header .star {
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.25);
+            line-height: 1;
+        }
+
+        /* карточки услуг — одинаковой высоты */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.8rem;
+            margin: 2.5rem 0 3rem;
+        }
+
+        .service-card {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            padding: 1.8rem 1.5rem;
+            border-radius: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: background 0.2s, border-color 0.2s;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            min-height: 220px;
+        }
+
+        .service-card:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .service-card h3 {
+            font-weight: 500;
+            font-size: 1.3rem;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
+
+        .service-card p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            flex: 1;
+        }
+
+        .service-tag {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            margin-top: 0.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            align-self: flex-start;
+        }
+
+        .price-section {
+            margin: 2.8rem 0 1.5rem;
+        }
+
+        .price-section h2 {
+            font-weight: 350;
+            font-size: 1.8rem;
+            letter-spacing: -0.02em;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 0.4rem;
+            margin-bottom: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: #fff;
+        }
+
+        .price-section h2 small {
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.5);
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .price-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 2rem;
+            padding: 0.25rem;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.1rem 1.8rem;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 2rem;
+            transition: background 0.15s;
+            border: 1px solid transparent;
+            backdrop-filter: blur(2px);
+            gap: 1.5rem;
+            flex-wrap: nowrap;
+        }
+
+        .price-row:hover {
+            background: rgba(255, 255, 255, 0.09);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .price-row .service-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .price-row .service-name {
+            font-weight: 400;
+            font-size: 1.05rem;
+            color: #fff;
+            white-space: nowrap;
+        }
+
+        .price-row .service-desc {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 300;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .price-row .price {
+            font-weight: 450;
+            font-size: 1.2rem;
+            letter-spacing: -0.01em;
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            padding: 0.2rem 1.5rem;
+            border-radius: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(2px);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .footer {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .footer .badge {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.3);
+            padding: 0.2rem 1.2rem;
+            border-radius: 60px;
+            font-size: 0.7rem;
+            font-weight: 300;
+            letter-spacing: 0.3px;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+
+        @media (max-width: 768px) {
+            .price-row {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                padding: 1rem 1.2rem;
+            }
+            .price-row .service-info {
+                flex-wrap: wrap;
+                gap: 0.3rem;
+                width: 100%;
+            }
+            .price-row .service-name {
+                white-space: normal;
+            }
+            .price-row .service-desc {
+                white-space: normal;
+                width: 100%;
+                margin-left: 0;
+            }
+            .price-row .price {
+                font-size: 1rem;
+                padding: 0.1rem 1.2rem;
+                margin-left: auto;
+            }
+            .service-card {
+                min-height: 180px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
+            .container { padding: 1.5rem 1rem; }
+            .services-grid { gap: 1.2rem; }
+            .header .name {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- шапка: Pavel Popov + звезда в одной строке по центру -->
+    <div class="header">
+        <span class="name">Pavel Popov</span>
+        <span class="star">✦</span>
+    </div>
+
+    <!-- услуги карточками (одинаковая высота) -->
+    <div class="services-grid">
+        <div class="service-card">
+            <h3>Создание сайтов</h3>
+            <p>Любой на ваш выбор — от лендинга до интернет-магазина. Адаптив, чистая вёрстка, современный дизайн.</p>
+            <span class="service-tag">под ключ</span>
+        </div>
+        <div class="service-card">
+            <h3>Визуализация ПО</h3>
+            <p>Дизайн интерфейсов, дашборды, прототипы, анимация состояний, UI/UX-аудит.</p>
+            <span class="service-tag">UI/UX</span>
+        </div>
+        <div class="service-card">
+            <h3>Редактирование</h3>
+            <p>Правка существующих проектов, рефакторинг, адаптация под мобильные устройства.</p>
+            <span class="service-tag">доработка</span>
+        </div>
+        <div class="service-card">
+            <h3>Консультация</h3>
+            <p>Аудит, выбор технологий, оптимизация производительности и архитектуры.</p>
+            <span class="service-tag">экспертиза</span>
+        </div>
+    </div>
+
+    <!-- прайс-лист -->
+    <div class="price-section">
+        <h2>
+            прайс-лист
+            <small>— фиксированные пакеты</small>
+        </h2>
+        <div class="price-list">
+            <div class="price-row">
+                <div class="service-info">
+                    <span class="service-name">Сайт на ваш выбор</span>
+                    <span class="service-desc">до 5 страниц на одну вкладку</span>
+                </div>
+                <span class="price">$5–$15</span>
+            </div>
+            <div class="price-row">
+                <div class="service-info">
+                    <span class="service-name">Сайт для прайс-листа</span>
+                    <span class="service-desc">зависимо от требований покупателя</span>
+                </div>
+                <span class="price">$10–$15</span>
+            </div>
+            <div class="price-row">
+                <div class="service-info">
+                    <span class="service-name">Визуализация + Редактирование</span>
+                    <span class="service-desc">прототип + дизайн-система + правки</span>
+                </div>
+                <span class="price">$20</span>
+            </div>
+            <div class="price-row">
+                <div class="service-info">
+                    <span class="service-name">Создание приложения</span>
+                    <span class="service-desc">мобильное / веб-приложение, адаптивный интерфейс</span>
+                </div>
+                <span class="price">$35–$70</span>
+            </div>
+            <div class="price-row">
+                <div class="service-info">
+                    <span class="service-name">Комплексное сопровождение</span>
+                    <span class="service-desc">сайт + визуализация + приложение + поддержка</span>
+                </div>
+                <span class="price">$200</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- футер -->
+    <div class="footer">
+        <div class="badge">✦</div>
+    </div>
+
+</div>
+</body>
+</html>
